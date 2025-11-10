@@ -1,0 +1,24 @@
+{
+  "name": "wechat-bot",
+  "version": "1.0.0",
+  "description": "微信群自动回复机器人 - 基于 Wechaty",
+  "main": "bot.js",
+  "type": "module",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "node --watch bot.js"
+  },
+  "keywords": [
+    "wechaty",
+    "wechat",
+    "bot",
+    "chatbot"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wechaty": "^1.20.2",
+    "wechaty-puppet-wechat4u": "^1.14.9",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
