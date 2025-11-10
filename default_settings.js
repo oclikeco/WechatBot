@@ -1,0 +1,1 @@
+export const kimi_apikey = "sk-zdfLiI4corSD8PKkCGHeJlcAbANM0mwv4gUB2lw3weq5FJ6h"

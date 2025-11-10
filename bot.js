@@ -1,6 +1,7 @@
 import { WechatyBuilder } from 'wechaty'
 import qrcode from 'qrcode-terminal'
 import config from './config.js'
+import { getAIResponse } from './ai.js'
 
 // 创建 Wechaty 实例
 const bot = WechatyBuilder.build({
@@ -73,29 +74,41 @@ bot.on('message', async (message) => {
 
     console.log(`📩 [${roomTopic}] ${sender.name()}: ${text}`)
 
-    // 匹配回复规则
-    let replyText = null
-    for (const rule of config.autoReplyRules) {
-      if (rule.keyword.test(text)) {
-        replyText = rule.reply
-        break
+    // 使用 AI API 生成回复
+    try {
+      // 使用群聊 ID 作为对话标识，让同一个群共享对话历史
+      const conversationId = await room.id
+      const userName = sender.name()
+
+      // 在消息中标注发送者名字，让 AI 知道是谁在说话
+      const messageWithUser = `${userName}: ${text}`
+
+      const replyText = await getAIResponse(messageWithUser, conversationId, {
+        systemPrompt: config.aiSystemPrompt,
+        model: config.aiModel,
+        temperature: config.aiTemperature,
+        maxHistoryLength: config.aiMaxHistoryLength
+      })
+
+      // 发送回复
+      if (replyText) {
+        // 如果是@机器人，则@回发送者
+        if (mentionSelf) {
+          await room.say(replyText, sender)
+        } else {
+          await room.say(replyText)
+        }
+        console.log(`🤖 AI 回复: ${replyText}`)
       }
-    }
-
-    // 如果没有匹配到规则，使用默认回复
-    if (!replyText && config.defaultReply) {
-      replyText = config.defaultReply
-    }
-
-    // 发送回复
-    if (replyText) {
-      // 如果是@机器人，则@回发送者
+    } catch (error) {
+      console.error('❌ AI API 调用失败:', error)
+      // 如果 API 调用失败，发送错误提示
+      const errorMessage = '抱歉，我现在遇到了一些问题，请稍后再试。'
       if (mentionSelf) {
-        await room.say(replyText, sender)
+        await room.say(errorMessage, sender)
       } else {
-        await room.say(replyText)
+        await room.say(errorMessage)
       }
-      console.log(`🤖 回复: ${replyText}`)
     }
   } catch (error) {
     console.error('❌ 处理消息时出错:', error)
