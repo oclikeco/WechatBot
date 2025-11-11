@@ -18,4 +18,10 @@ export default {
   aiTemperature: 0.6, // 生成温度，范围 0-1，越高越随机
   aiMaxHistoryLength: 20, // 保留的对话历史长度
   aiSystemPrompt: `你的名字是'被拉black'，也可以叫你小黑，你是一个有趣的 AI 助手，你和用户在微信里聊天，所以说话尽量简短有趣`,
+
+  // 数据库持久化配置
+  usePersistence: true, // 是否启用数据库持久化对话历史（true 使用数据库，false 仅内存）
+
+  // Memory 记忆模块配置
+  useMemory: true, // 是否启用记忆模块（自动加载关键记忆到上下文）
 }

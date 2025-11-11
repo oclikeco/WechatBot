@@ -87,7 +87,9 @@ bot.on('message', async (message) => {
         systemPrompt: config.aiSystemPrompt,
         model: config.aiModel,
         temperature: config.aiTemperature,
-        maxHistoryLength: config.aiMaxHistoryLength
+        maxHistoryLength: config.aiMaxHistoryLength,
+        usePersistence: config.usePersistence, // 传递持久化配置
+        useMemory: config.useMemory // 传递记忆配置
       })
 
       // 发送回复
@@ -118,6 +120,16 @@ bot.on('message', async (message) => {
 // 错误处理
 bot.on('error', (error) => {
   console.error('❌ 机器人出错:', error)
+
+  // 检查是否为登录过期错误（1102）
+  if (error.code === 2 && error.details && error.details.includes('1102')) {
+    console.log('⚠️  检测到登录会话过期（错误码 1102）')
+    console.log('💡 可能原因：')
+    console.log('   1. 长时间未操作，微信服务器主动下线')
+    console.log('   2. 账号被微信限制使用网页版')
+    console.log('   3. 频繁操作触发微信安全机制')
+    console.log('🔄 请重启机器人并重新扫码登录')
+  }
 })
 
 // 启动机器人
