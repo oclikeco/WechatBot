@@ -2,3 +2,5 @@ node_modules/
 *.log
 .env
 *.memory-card.json
+default_settings.js
+.wechaty/
